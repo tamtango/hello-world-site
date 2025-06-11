@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facemash Top 25 Leaderboard</title>
+    <style>
+        .container { text-align: center; padding: 20px; }
+        #top-25-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; }
+        #top-25-list li { margin: 10px; text-align: center; }
+        #top-25-list img { width: 237px; height: 336px; object-fit: cover; }
+        #top-25-list p { margin: 5px 0; font-size: 14px; }
+        .button { display: inline-block; padding: 10px 20px; margin: 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; }
+        .button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facemash Top 25 Leaderboard</h1>
+        <a href="/" class="button">Go Back to Vote Page</a>
+        <div id="top-25">
+            <h3>Top 25 Images</h3>
+            <ul id="top-25-list">
+                <li><img src="static/images/image1.jpg" alt="Top 1"><p>Rank 1: Rating 1000, Votes 5</p></li>
+                <li><img src="static/images/image2.jpg" alt="Top 2"><p>Rank 2: Rating 950, Votes 3</p></li>
+                <!-- Add more static entries as needed -->
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

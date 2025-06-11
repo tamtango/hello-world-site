@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facemash Voting</title>
+    <style>
+        .container { text-align: center; padding: 20px; }
+        .image-container { display: inline-block; margin: 10px; vertical-align: top; }
+        .image-container img { width: 474px; height: 672px; object-fit: cover; cursor: pointer; transition: opacity 0.3s; }
+        .image-container img:hover { opacity: 0.8; }
+        .button { display: inline-block; padding: 10px 20px; margin: 20px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; }
+        .button:hover { background-color: #0056b3; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Facemash Voting</h1>
+        <div id="images">
+            <div class="image-container" id="imageA">
+                <img src="static/images/image1.jpg" alt="Image A" onclick="vote('A')" data-image="image1.jpg">
+            </div>
+            <div class="image-container" id="imageB">
+                <img src="static/images/image2.jpg" alt="Image B" onclick="vote('B')" data-image="image2.jpg">
+            </div>
+        </div>
+        <a href="/top25" class="button">Go to Top 25 Facemash Leaderboard</a>
+    </div>
+
+    <script>
+        let votes = { 'image1.jpg': 0, 'image2.jpg': 0 };
+
+        function vote(choice) {
+            const image = document.querySelector(`#image${choice} img`).dataset.image;
+            votes[image]++;
+            alert(`Voted for ${image}! Current votes: ${votes[image]}`);
+            // Reload or update UI manually since no backend
+            loadNewImages();
+        }
+
+        function loadNewImages() {
+            // Simulate new images (static for now)
+            const imgA = document.querySelector('#imageA img');
+            const imgB = document.querySelector('#imageB img');
+            imgA.src = `static/images/image${Math.floor(Math.random() * 2) + 1}.jpg`;
+            imgB.src = `static/images/image${Math.floor(Math.random() * 2) + 1}.jpg`;
+            imgA.dataset.image = imgA.src.split('/').pop();
+            imgB.dataset.image = imgB.src.split('/').pop();
+        }
+
+        // Load initial images
+        document.addEventListener('DOMContentLoaded', loadNewImages);
+    </script>
+</body>
+</html>
