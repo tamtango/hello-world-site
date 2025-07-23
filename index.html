@@ -3,134 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Facemash Voting</title>
+    <title>Odysee Stream with Twitch Chat</title>
     <style>
-        .container { text-align: center; padding: 20px; }
-        .image-container { display: inline-block; margin: 10px; vertical-align: top; }
-        .image-container img { width: 474px; height: 672px; object-fit: cover; cursor: pointer; transition: opacity 0.3s; }
-        .image-container img:hover { opacity: 0.8; }
-        .button { display: inline-block; padding: 10px 20px; margin: 10px; background-color: #007bff; color: white; text-decoration: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
-        .button:hover { background-color: #0056b3; }
-        #leaderboard { display: none; margin-top: 20px; }
-        #leaderboard ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; }
-        #leaderboard li { margin: 10px; text-align: center; }
-        #leaderboard img { width: 237px; height: 336px; object-fit: cover; }
-        #leaderboard p { margin: 5px 0; font-size: 14px; }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .stream-container {
+            flex: 3;
+            padding: 10px;
+        }
+        .chat-container {
+            flex: 1;
+            padding: 10px;
+            background-color: #18181b;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+            .stream-container, .chat-container {
+                flex: none;
+                width: 100%;
+                height: 50%;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Facemash Voting</h1>
-        <div id="images">
-            <div class="image-container" id="imageA">
-                <img src="image1.jpg" alt="Image A" onclick="vote('A')" data-image="image1.jpg" data-rating="1000.0" data-votes="0">
-            </div>
-            <div class="image-container" id="imageB">
-                <img src="image2.jpg" alt="Image B" onclick="vote('B')" data-image="image2.jpg" data-rating="1000.0" data-votes="0">
-            </div>
-        </div>
-        <div>
-            <button class="button" onclick="toggleLeaderboard()">Show Top 25 Leaderboard</button>
-        </div>
-        <div id="leaderboard">
-            <h3>Top 25 Leaderboard</h3>
-            <ul id="top-25-list"></ul>
-        </div>
+    <div class="stream-container">
+        <iframe id="odysee-iframe" style="width:100%; aspect-ratio:16/9;" src="https://odysee.com/$/embed/@bajindo:f/my1stream:0?r=C1pEYKwikxTDEHQumCkULDxuEvTHVr43&autoplay=true" allowfullscreen></iframe>
     </div>
-
-    <script>
-        // List of available images in the root directory
-        const images = Array.from({length: 57}, (_, i) => `image${i+1}.jpg`);
-        let ratings = {}; // Store ratings
-        let votes = {};   // Store vote counts
-
-        // Initialize ratings and votes for all images
-        images.forEach(img => {
-            ratings[img] = localStorage.getItem(`rating_${img}`) || 1000.0;
-            votes[img] = parseInt(localStorage.getItem(`votes_${img}`)) || 0;
-        });
-
-        function calculateEloRating(ratingA, ratingB, outcomeA, k = 32) {
-            const expectedA = 1 / (1 + Math.pow(10, (ratingB - ratingA) / 400));
-            return ratingA + k * (outcomeA - expectedA);
-        }
-
-        function loadNewImages() {
-            let idxA = Math.floor(Math.random() * images.length);
-            let idxB = Math.floor(Math.random() * images.length);
-            while (idxA === idxB) {
-                idxB = Math.floor(Math.random() * images.length);
-            }
-
-            const imgA = document.querySelector('#imageA img');
-            const imgB = document.querySelector('#imageB img');
-            imgA.src = images[idxA];
-            imgB.src = images[idxB];
-            imgA.dataset.image = images[idxA];
-            imgB.dataset.image = images[idxB];
-            imgA.dataset.rating = ratings[images[idxA]];
-            imgB.dataset.rating = ratings[images[idxB]];
-            imgA.dataset.votes = votes[images[idxA]];
-            imgB.dataset.votes = votes[images[idxB]];
-        }
-
-        function vote(choice) {
-            const imgA = document.querySelector('#imageA img');
-            const imgB = document.querySelector('#imageB img');
-            const ratingA = parseFloat(imgA.dataset.rating);
-            const ratingB = parseFloat(imgB.dataset.rating);
-            let outcomeA, outcomeB;
-
-            if (choice === 'A') {
-                outcomeA = 1;
-                outcomeB = 0;
-            } else {
-                outcomeA = 0;
-                outcomeB = 1;
-            }
-
-            const newRatingA = calculateEloRating(ratingA, ratingB, outcomeA);
-            const newRatingB = calculateEloRating(ratingB, ratingA, outcomeB);
-
-            ratings[imgA.dataset.image] = newRatingA;
-            ratings[imgB.dataset.image] = newRatingB;
-            votes[imgA.dataset.image] = (votes[imgA.dataset.image] || 0) + 1;
-            votes[imgB.dataset.image] = (votes[imgB.dataset.image] || 0) + 1;
-
-            // Save to localStorage
-            localStorage.setItem(`rating_${imgA.dataset.image}`, newRatingA);
-            localStorage.setItem(`votes_${imgA.dataset.image}`, votes[imgA.dataset.image]);
-            localStorage.setItem(`rating_${imgB.dataset.image}`, newRatingB);
-            localStorage.setItem(`votes_${imgB.dataset.image}`, votes[imgB.dataset.image]);
-
-            alert(`Voted for ${imgA.dataset.image}! New rating: ${newRatingA.toFixed(2)}, Votes: ${votes[imgA.dataset.image]}`);
-            loadNewImages();
-            updateLeaderboard();
-        }
-
-        function updateLeaderboard() {
-            const sortedImages = Object.entries(ratings)
-                .sort(([, ratingA], [, ratingB]) => ratingB - ratingA)
-                .slice(0, 25);
-            const top25List = document.getElementById('top-25-list');
-            top25List.innerHTML = '';
-            sortedImages.forEach(([img, rating], index) => {
-                const li = document.createElement('li');
-                li.innerHTML = `<img src="${img}" alt="Top ${index + 1}"><p>Rank ${index + 1}: Rating ${rating.toFixed(2)}, Votes ${votes[img] || 0}</p>`;
-                top25List.appendChild(li);
-            });
-        }
-
-        function toggleLeaderboard() {
-            const leaderboard = document.getElementById('leaderboard');
-            leaderboard.style.display = leaderboard.style.display === 'none' ? 'block' : 'none';
-            if (leaderboard.style.display === 'block') {
-                updateLeaderboard();
-            }
-        }
-
-        // Load initial images
-        document.addEventListener('DOMContentLoaded', loadNewImages);
-    </script>
+    <div class="chat-container">
+        <iframe src="https://www.twitch.tv/embed/kermitfrogo/chat?darkpopout" frameborder="0"></iframe>
+    </div>
 </body>
 </html>
