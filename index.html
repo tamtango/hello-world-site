@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Odysee Stream</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .stream-container {
+            width: 100%;
+            max-width: 1280px; /* Adjust based on your preference */
+            aspect-ratio: 16 / 9;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        @media (max-width: 768px) {
+            .stream-container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stream-container">
+        <iframe id="odysee-iframe" src="https://odysee.com/$/embed/@bajindo:f/my1stream:0?r=C1pEYKwikxTDEHQumCkULDxuEvTHVr43" allowfullscreen></iframe>
+    </div>
+</body>
+</html>
